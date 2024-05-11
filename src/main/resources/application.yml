@@ -26,7 +26,7 @@ spring:
 #    data-source: blockchain_db
 
 bitcoin:
-  network: org.bitcoin.test
+  network: org.bitcoin.production
 
 logging:
   level:

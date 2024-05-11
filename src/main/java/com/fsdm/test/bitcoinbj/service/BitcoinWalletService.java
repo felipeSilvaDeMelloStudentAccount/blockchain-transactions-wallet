@@ -12,6 +12,8 @@ import org.bitcoinj.wallet.Wallet;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.util.Date;
 import java.util.Objects;
 
 @Service
@@ -32,10 +34,15 @@ public class BitcoinWalletService {
         assert networkParameters != null;
         // Change ScriptType from P2PK to P2PKH or P2WPKH
         Wallet wallet = Wallet.createDeterministic(networkParameters, Script.ScriptType.P2PKH);
+        BitcoinWallet bitcoinWallet = buildBitcoinWallet(wallet);
+        //Save to the wallet
+        bitcoinWalletRepository.save(bitcoinWallet);
+        return bitcoinWallet;
+    }
+
+    private BitcoinWallet buildBitcoinWallet(Wallet wallet) {
         DeterministicSeed keyChainSeed = wallet.getKeyChainSeed();
         String seedWords = Joiner.on(" ").join(Objects.requireNonNull(keyChainSeed.getMnemonicCode()));
-
-        BitcoinWallet bitcoinWallet = new BitcoinWallet();
 
         // Retrieve the wallet details
         Address address = wallet.currentReceiveAddress();
@@ -46,15 +53,21 @@ public class BitcoinWalletService {
         String privateKeyAsHex = keyFromAddress.getPrivateKeyAsHex();
         String publicKeyAsHex = keyFromAddress.getPublicKeyAsHex();
 
-        // Set values for saving to database
-        bitcoinWallet.setAddress(bitcoinAddress);
-        bitcoinWallet.setPrivateKey(privateKeyAsHex);
-        bitcoinWallet.setPublicKey(publicKeyAsHex);
-        bitcoinWallet.setSeedWords(seedWords);
+        return BitcoinWallet.builder()
+                .address(bitcoinAddress)
+                .balance(wallet.getBalance().getValue())
+                .privateKey(privateKeyAsHex)
+                .publicKey(publicKeyAsHex)
+                .seedWords(seedWords)
+                .createdAt(convertEpochToDate(wallet.getEarliestKeyCreationTime()))
+                .updatedAt(convertEpochToDate(wallet.getLastBlockSeenTimeSecs()))
+                .build();
 
-        // Save wallet locally to db
-        bitcoinWalletRepository.save(bitcoinWallet);
-
-        return bitcoinWallet;
+    }
+    
+    public static Date convertEpochToDate(long epochSeconds) {
+        // Convert the epoch seconds directly to an Instant
+        Instant instant = Instant.ofEpochSecond(epochSeconds);
+        return Date.from(instant);
     }
 }

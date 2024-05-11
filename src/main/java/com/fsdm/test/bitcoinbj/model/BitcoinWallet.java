@@ -2,6 +2,7 @@ package com.fsdm.test.bitcoinbj.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -14,6 +15,7 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "bitcoin_wallets")
+@Builder
 public class BitcoinWallet {
 
     @Id
@@ -32,9 +34,11 @@ public class BitcoinWallet {
 
     @CreationTimestamp
     @Column(name = "created_at")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 
     @LastModifiedDate
     @Column(name = "updated_at")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
 }
