@@ -1,0 +1,35 @@
+server:
+  port: 8000
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: Bitcoin Wallet Service - Development
+  datasource:
+    url: jdbc:postgresql://localhost:5432/blockchain_db
+    username: blockchain
+    password: myPassword
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+#  flyway:
+#    locations: classpath:db/migration  # Default location, specify if different
+#    baseline-on-migrate: true  # Useful for existing databases
+#    user: blockchain
+#    password: myPassword
+#    url: jdbc:postgresql://localhost:5432/blockchain_db
+#    data-source: blockchain_db
+
+bitcoin:
+  network: org.bitcoin.test
+
+logging:
+  level:
+    springframework: DEBUG
+    org.hibernate.sql: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
