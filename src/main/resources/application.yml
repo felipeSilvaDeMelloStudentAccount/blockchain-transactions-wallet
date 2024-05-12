@@ -14,22 +14,15 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-#  flyway:
-#    locations: classpath:db/migration  # Default location, specify if different
-#    baseline-on-migrate: true  # Useful for existing databases
-#    user: blockchain
-#    password: myPassword
-#    url: jdbc:postgresql://localhost:5432/blockchain_db
-#    data-source: blockchain_db
-
+  flyway:
+    baseline-on-migrate: true
 bitcoin:
   network: org.bitcoin.production
 
 logging:
   level:
-    springframework: DEBUG
-    org.hibernate.sql: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    root: WARN
+    springframework: WARN
+    org.hibernate.sql: WARN
+    org.bitcoinj: WARN
+    org.hibernate.type.descriptor.sql.BasicBinder: WARN
