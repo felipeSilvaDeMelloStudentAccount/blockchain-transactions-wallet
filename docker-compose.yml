@@ -1,0 +1,41 @@
+version: '3'
+
+networks:
+  gym_network:
+    driver: bridge
+
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: blockchain_db
+      POSTGRES_USER: blockchain
+      POSTGRES_PASSWORD: myPassword243OSOKpadpa
+    networks:
+      - gym_network
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql  # Mount the init.sql script
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U blockchain -d blockchain_db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  gym-attendance:
+    image: gym-attendance:latest
+    networks:
+      - gym_network
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    command: >
+      sh -c "java -jar /app/gym.attendance-0.0.1-SNAPSHOT.jar --server.port=8000 \
+      --server.servlet.context-path=/api \
+      --spring.datasource.url=jdbc:postgresql://postgres:5432/blockchain_db \
+      --spring.datasource.username=blockchain \
+      --spring.datasource.password=myPassword243OSOKpadpa \
+      --spring.jpa.hibernate.ddl-auto=create \
+      --logging.level.org.hibernate.sql=DEBUG \
+      --logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE"
