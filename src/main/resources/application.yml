@@ -9,7 +9,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/blockchain_db
     username: blockchain
-    password: myPassword
+    password: myPassword243OSOKpadpa
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:

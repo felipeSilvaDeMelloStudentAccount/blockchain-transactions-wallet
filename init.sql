@@ -1,3 +1,9 @@
+-- init.sql
+
+-- Grant privileges to the member
+GRANT ALL PRIVILEGES ON DATABASE
+blockchain_db TO blockchain;
+
 CREATE TABLE IF NOT EXISTS bitcoin_wallets (
                                                id BIGSERIAL PRIMARY KEY,
                                                address VARCHAR(255),
@@ -8,4 +14,3 @@ CREATE TABLE IF NOT EXISTS bitcoin_wallets (
     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
     );
-ALTER TABLE bitcoin_wallets ALTER COLUMN id TYPE BIGINT USING id::BIGINT;
