@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/bitcoin/wallets")
+@RequestMapping("/wallets")
 @AllArgsConstructor
 public class BitcoinWalletController {
     private final BitcoinWalletService bitcoinWalletService;
