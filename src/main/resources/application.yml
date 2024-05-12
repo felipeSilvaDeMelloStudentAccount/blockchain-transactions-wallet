@@ -17,13 +17,13 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-  flyway:
-    locations: classpath:db/migration  # Default location, specify if different
-    baseline-on-migrate: true  # Useful for existing databases
-    user: blockchain
-    password: myPassword243OSOKpadpa
-    url: jdbc:postgresql://localhost:5432/blockchain_db
-    data-source: blockchain_db
+#  flyway:
+#    locations: classpath:db/migration  # Default location, specify if different
+#    baseline-on-migrate: true  # Useful for existing databases
+#    user: blockchain
+#    password: myPassword
+#    url: jdbc:postgresql://localhost:5432/blockchain_db
+#    data-source: blockchain_db
 
 bitcoin:
   network: org.bitcoin.production
