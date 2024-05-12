@@ -2,6 +2,7 @@ package com.fsdm.test.bitcoinbj.controller;
 
 import com.fsdm.test.bitcoinbj.model.BlockDAO;
 import com.fsdm.test.bitcoinbj.service.BlockService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,9 +13,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/blocks")
+@AllArgsConstructor
 public class BlockController {
 
-    @Autowired
     private BlockService blockService;
 
     @GetMapping

@@ -21,7 +21,6 @@ public class BitcoinWalletController {
             BitcoinWallet bitcoinWallet = bitcoinWalletService.createWallet();
             return ResponseEntity.ok(bitcoinWallet);
         } catch (RuntimeException e) {
-            // Log the error and return an appropriate HTTP response
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create wallet: " + e.getMessage());
         }
     }
