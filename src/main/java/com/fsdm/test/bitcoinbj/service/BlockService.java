@@ -1,6 +1,6 @@
 package com.fsdm.test.bitcoinbj.service;
 
-import com.fsdm.test.bitcoinbj.model.BlockDAO;
+import com.fsdm.test.bitcoinbj.model.transaction.BlockDAO;
 
 import java.util.List;
 

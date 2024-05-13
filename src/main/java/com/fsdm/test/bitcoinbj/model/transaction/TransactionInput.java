@@ -22,3 +22,4 @@ public class TransactionInput {
     @JoinColumn(name = "transaction_id")
     private TransactionDAO transactionDAO;
 }
+

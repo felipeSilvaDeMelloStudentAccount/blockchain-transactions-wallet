@@ -1,6 +1,5 @@
 package com.fsdm.test.bitcoinbj.model.transaction;
 
-import com.fsdm.test.bitcoinbj.model.BlockDAO;
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -1,6 +1,6 @@
 package com.fsdm.test.bitcoinbj.listener;
 
-import com.fsdm.test.bitcoinbj.model.BlockDAO;
+import com.fsdm.test.bitcoinbj.model.transaction.BlockDAO;
 import com.fsdm.test.bitcoinbj.model.transaction.TransactionDAO;
 import com.fsdm.test.bitcoinbj.repository.BlockRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -58,3 +58,4 @@ public class BitcoinPeerEventListener implements PeerConnectedEventListener, Pee
         return blockDAO;
     }
 }
+

@@ -23,13 +23,9 @@ public class BitcoinWallet {
     private Long id;
 
     private String address;
-
     private Long balance;
-
     private String privateKey;
-
     private String publicKey;
-
     private String seedWords;
 
     @CreationTimestamp

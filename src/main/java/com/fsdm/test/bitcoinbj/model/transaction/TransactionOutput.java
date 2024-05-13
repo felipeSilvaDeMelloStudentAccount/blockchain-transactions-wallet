@@ -2,6 +2,7 @@ package com.fsdm.test.bitcoinbj.model.transaction;
 
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.math.BigDecimal;
 
 @Entity
@@ -22,3 +23,4 @@ public class TransactionOutput {
     @JoinColumn(name = "transaction_id")
     private TransactionDAO transactionDAO;
 }
+
