@@ -10,7 +10,6 @@ import org.bitcoinj.core.Peer;
 import org.bitcoinj.core.listeners.BlocksDownloadedEventListener;
 import org.bitcoinj.core.listeners.PeerConnectedEventListener;
 import org.bitcoinj.core.listeners.PeerDisconnectedEventListener;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -37,11 +36,18 @@ public class BitcoinPeerEventListener implements PeerConnectedEventListener, Pee
     @Override
     public void onBlocksDownloaded(Peer peer, Block block, FilteredBlock filteredBlock, int blocksLeft) {
         log.info("Block downloaded: {} from peer: {}", block.getHashAsString(), peer);
+        log.info("Block details: Nonce: {}, Difficulty: {}, Transactions: {}", block.getNonce(), block.getDifficultyTarget(), block.getTransactions().size());
+
         BlockDAO blockDAO = getBlockDAO(block);
-        blockRepository.save(blockDAO);
+        try {
+            blockRepository.save(blockDAO);
+            log.info("Block saved: {}", block.getHashAsString());
+        } catch (Exception e) {
+            log.error("Error saving block: {}", e.getMessage(), e);
+        }
     }
 
-    private static @NotNull BlockDAO getBlockDAO(Block block) {
+    private static BlockDAO getBlockDAO(Block block) {
         BlockDAO blockDAO = new BlockDAO();
         blockDAO.setHash(block.getHashAsString());
         blockDAO.setPreviousHash(block.getPrevBlockHash().toString());
@@ -51,11 +57,15 @@ public class BitcoinPeerEventListener implements PeerConnectedEventListener, Pee
         blockDAO.setTransactions(new ArrayList<>());
 
         for (org.bitcoinj.core.Transaction tx : block.getTransactions()) {
+            log.info("Transaction: {}", tx.getHashAsString());
             TransactionDAO domainTx = new TransactionDAO();
             domainTx.setTransactionId(tx.getHashAsString());
+            domainTx.setBlockDAO(blockDAO);
             blockDAO.getTransactions().add(domainTx);
         }
         return blockDAO;
     }
 }
+
+
 
