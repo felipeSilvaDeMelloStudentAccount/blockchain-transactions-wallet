@@ -6,6 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BitcoinWalletRepository extends JpaRepository<BitcoinWallet, Long> {
-
     BitcoinWallet findByAddress(String address);
 }

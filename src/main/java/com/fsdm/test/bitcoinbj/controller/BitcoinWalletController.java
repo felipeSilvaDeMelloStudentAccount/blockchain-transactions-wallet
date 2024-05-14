@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/bitcoin/wallets")
+@RequestMapping("/wallets")
 @AllArgsConstructor
 public class BitcoinWalletController {
     private final BitcoinWalletService bitcoinWalletService;
@@ -21,8 +21,8 @@ public class BitcoinWalletController {
             BitcoinWallet bitcoinWallet = bitcoinWalletService.createWallet();
             return ResponseEntity.ok(bitcoinWallet);
         } catch (RuntimeException e) {
-            // Log the error and return an appropriate HTTP response
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create wallet: " + e.getMessage());
         }
     }
 }
+

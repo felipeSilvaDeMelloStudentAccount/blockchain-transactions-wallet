@@ -13,9 +13,11 @@ import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.store.BlockStore;
 import org.bitcoinj.store.MemoryBlockStore;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.net.InetAddress;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @Slf4j
@@ -32,6 +34,11 @@ public class BitcoinNetworkService {
 
     @PostConstruct
     public void start() {
+        startAsync();
+    }
+
+    @Async
+    public CompletableFuture<Void> startAsync() {
         try {
             NetworkParameters networkParameters = MainNetParams.get();
             BlockStore blockStore = new MemoryBlockStore(networkParameters);
@@ -46,12 +53,22 @@ public class BitcoinNetworkService {
             this.peerGroup.addBlocksDownloadedEventListener(bitcoinPeerEventListener);
 
             this.peerGroup.start();
-            this.peerGroup.downloadBlockChain();
+
+            // Download blockchain in a separate thread
+            CompletableFuture.runAsync(() -> {
+                try {
+                    this.peerGroup.downloadBlockChain();
+                } catch (Exception e) {
+                    log.error("Error downloading blockchain: {}", e.getMessage(), e);
+                }
+            });
+
             log.info("Bitcoin network service started, connected only to seed.bitcoin.sipa.be.");
         } catch (Exception e) {
             log.error("Error starting Bitcoin network service: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to start Bitcoin network service", e);
         }
+        return CompletableFuture.completedFuture(null);
     }
 
     @PreDestroy
@@ -64,3 +81,4 @@ public class BitcoinNetworkService {
         log.info("Bitcoin network service stopped.");
     }
 }
+
