@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.hateoas.RepresentationModel;
 
-import java.time.Instant;
 import java.util.List;
 
 @Data
@@ -18,7 +17,8 @@ public class BlockResource extends RepresentationModel<BlockResource> {
     private String lastHash;
     private long nonce;
     private long difficulty;
-    private Instant timestamp;
+    private String timestamp;  // Updated to String
     private List<TransactionResource> transactions;
 }
+
 

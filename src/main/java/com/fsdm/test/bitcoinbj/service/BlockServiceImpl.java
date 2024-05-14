@@ -67,6 +67,9 @@ public class BlockServiceImpl implements BlockService {
                 .map(this::mapToTransactionResource)
                 .collect(Collectors.toList());
 
+        // Format the timestamp to a human-readable string
+        String formattedTimestamp = block.getTimestamp().atZone(ZoneId.systemDefault()).format(formatter);
+
         BlockResource blockResource = new BlockResource(
                 block.getHash(),
                 block.getPreviousHash(),
@@ -74,7 +77,7 @@ public class BlockServiceImpl implements BlockService {
                 lastHash,
                 block.getNonce(),
                 block.getDifficulty(),
-                block.getTimestamp(),
+                formattedTimestamp,
                 transactionResources
         );
 
@@ -165,6 +168,3 @@ public class BlockServiceImpl implements BlockService {
                 .orElse(null);
     }
 }
-
-
-
