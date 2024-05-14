@@ -1,6 +1,6 @@
 package com.fsdm.test.bitcoinbj.controller;
 
-import com.fsdm.test.bitcoinbj.model.BitcoinWallet;
+import com.fsdm.test.bitcoinbj.model.wallet.BitcoinWallet;
 import com.fsdm.test.bitcoinbj.service.BitcoinWalletService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

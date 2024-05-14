@@ -26,3 +26,4 @@ public class TransactionDAO {
     @OneToMany(mappedBy = "transactionDAO", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<TransactionOutput> outputs;
 }
+
