@@ -1,28 +1,52 @@
 server:
-  port: 9001
+  port: ${PORT:9001}
   servlet:
     context-path: /api/bitcoin
 
 spring:
   application:
     name: Bitcoin Wallet Service - Development
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:default}
   datasource:
-    url: jdbc:postgresql://localhost:5432/blockchain_db
-    username: blockchain
-    password: myPassword243OSOKpadpa
-    driver-class-name: org.postgresql.Driver
+    url: ${URL:jdbc:postgresql://localhost:5432/blockchain_db}
+    username: ${USERNAME:blockchain}
+    password: ${PASSWORD:myPassword243OSOKpadpa}
+    driver-class-name: ${DB_DRIVER:org.postgresql.Driver}
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+  flyway:
+    baselineOnMigrate: true
 
 bitcoin:
-  network: org.bitcoin.production
+  network: ${BITCOIN_NETWORK:org.bitcoin.production}
 
 logging:
   level:
     springframework: WARN
     org.hibernate.sql: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: DEBUG
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: docker
+  datasource:
+    url: jdbc:postgresql://postgres:5432/blockchain_db
+    username: blockchain
+    password: myPassword243OSOKpadpa
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  flyway:
+    baselineOnMigrate: true

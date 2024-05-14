@@ -14,4 +14,4 @@ COPY wait-for-it.sh /app/
 RUN chmod +x wait-for-it.sh
 
 # Specify the command to run your application
-CMD ["./wait-for-it.sh", "postgres", "5432", "--", "java", "-jar", "blockchain-transactions-wallet-0.0.1-SNAPSHOT.jar", "--server.port=${PORT:8000}",  "--server.servlet.context-path=/api",  "--spring.datasource.url=${URL:jdbc:postgresql://postgres:5432/mygym}",   "--spring.datasource.username=${USERNAME:gymapi}",   "--spring.datasource.password=${PASSWORD:gym1243OSOKpadpas-69}",   "--spring.jpa.hibernate.ddl-auto=create", "--logging.level.org.hibernate.sql=DEBUG",   "--logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE"]
+CMD ["./wait-for-it.sh", "postgres:5432", "--", "java", "-jar", "blockchain-transactions-wallet-0.0.1-SNAPSHOT.jar", "--server.port=${PORT}", "--server.servlet.context-path=/api/bitcoin"]
