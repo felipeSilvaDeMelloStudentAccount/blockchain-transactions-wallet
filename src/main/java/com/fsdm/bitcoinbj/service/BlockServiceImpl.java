@@ -11,6 +11,8 @@ import com.fsdm.bitcoinbj.model.transaction.TransactionInput;
 import com.fsdm.bitcoinbj.model.transaction.TransactionOutput;
 import com.fsdm.bitcoinbj.repository.BlockRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,16 +29,12 @@ public class BlockServiceImpl implements BlockService {
     @Autowired
     private BlockRepository blockRepository;
 
-    @Override
-    public List<BlockDAO> getAllBlocks() {
-        return blockRepository.findAll();
-    }
 
     @Override
-    public BlockDAO getBlockByHash(String hash) {
-        Optional<BlockDAO> block = blockRepository.findById(hash);
-        return block.orElse(null);
+    public Page<BlockDAO> getAllBlocks(Pageable pageable) {
+        return blockRepository.findAll(pageable);
     }
+    
 
     @Override
     @Transactional
