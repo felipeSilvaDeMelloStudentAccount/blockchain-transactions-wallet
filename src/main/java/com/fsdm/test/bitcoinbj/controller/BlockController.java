@@ -1,6 +1,7 @@
 package com.fsdm.test.bitcoinbj.controller;
 
 import com.fsdm.test.bitcoinbj.model.transaction.BlockDAO;
+import com.fsdm.test.bitcoinbj.model.transaction.BlockDTO;
 import com.fsdm.test.bitcoinbj.service.BlockService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 public class BlockController {
 
-    private BlockService blockService;
+    private final BlockService blockService;
 
     @GetMapping
     public List<BlockDAO> getAllBlocks() {
@@ -23,8 +24,8 @@ public class BlockController {
     }
 
     @GetMapping("/{hash}")
-    public BlockDAO getBlockByHash(@PathVariable String hash) {
-        return blockService.getBlockByHash(hash);
+    public BlockDTO getBlockByHash(@PathVariable String hash) {
+        return blockService.getFormattedBlockByHash(hash);
     }
 }
 
