@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.stereotype.Service;
 
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,6 +32,8 @@ public class BlockServiceImpl implements BlockService {
 
     @Autowired
     private BlockRepository blockRepository;
+
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy 'at' HH:mm:ss").withZone(ZoneId.systemDefault());
 
     @Override
     public List<BlockDAO> getAllBlocks() {
@@ -161,5 +165,6 @@ public class BlockServiceImpl implements BlockService {
                 .orElse(null);
     }
 }
+
 
 
