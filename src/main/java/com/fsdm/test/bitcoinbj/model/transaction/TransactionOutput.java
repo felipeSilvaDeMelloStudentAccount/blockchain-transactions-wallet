@@ -16,11 +16,12 @@ public class TransactionOutput {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private BigDecimal value;  // Use BigDecimal for precision monetary values
+    private BigDecimal value;
     private String scriptPubKey;
 
     @ManyToOne
     @JoinColumn(name = "transaction_id")
     private TransactionDAO transactionDAO;
 }
+
 

@@ -1,6 +1,6 @@
 package com.fsdm.test.bitcoinbj.service;
 
-import com.fsdm.test.bitcoinbj.model.BitcoinWallet;
+import com.fsdm.test.bitcoinbj.model.wallet.BitcoinWallet;
 import com.fsdm.test.bitcoinbj.repository.BitcoinWalletRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.bitcoinj.core.Address;

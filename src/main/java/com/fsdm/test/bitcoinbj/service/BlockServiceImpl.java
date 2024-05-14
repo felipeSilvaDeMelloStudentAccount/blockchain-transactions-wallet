@@ -1,16 +1,32 @@
 package com.fsdm.test.bitcoinbj.service;
 
+import com.fsdm.test.bitcoinbj.controller.BlockController;
+import com.fsdm.test.bitcoinbj.model.resource.BlockResource;
+import com.fsdm.test.bitcoinbj.model.resource.TransactionInputResource;
+import com.fsdm.test.bitcoinbj.model.resource.TransactionOutputResource;
+import com.fsdm.test.bitcoinbj.model.resource.TransactionResource;
 import com.fsdm.test.bitcoinbj.model.transaction.BlockDAO;
-import com.fsdm.test.bitcoinbj.model.transaction.BlockDTO;
+import com.fsdm.test.bitcoinbj.model.transaction.TransactionDAO;
+import com.fsdm.test.bitcoinbj.model.transaction.TransactionInput;
+import com.fsdm.test.bitcoinbj.model.transaction.TransactionOutput;
 import com.fsdm.test.bitcoinbj.repository.BlockRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 public class BlockServiceImpl implements BlockService {
+
+    private static final Logger log = LoggerFactory.getLogger(BlockServiceImpl.class);
 
     @Autowired
     private BlockRepository blockRepository;
@@ -27,27 +43,110 @@ public class BlockServiceImpl implements BlockService {
     }
 
     @Override
-    public BlockDTO getFormattedBlockByHash(String hash) {
+    public EntityModel<BlockResource> getBlockResourceByHash(String hash) {
         Optional<BlockDAO> blockOptional = blockRepository.findById(hash);
         if (!blockOptional.isPresent()) {
             return null;
         }
 
         BlockDAO block = blockOptional.get();
+        // Ensure transactions are loaded
+        block.getTransactions().forEach(tx -> {
+            tx.getInputs().size();
+            tx.getOutputs().size();
+        });
+
         String nextHash = getNextHash(block);
         String lastHash = getLastHash();
 
-        return new BlockDTO(
+        List<TransactionResource> transactionResources = block.getTransactions().stream()
+                .map(this::mapToTransactionResource)
+                .collect(Collectors.toList());
+
+        BlockResource blockResource = new BlockResource(
                 block.getHash(),
                 block.getPreviousHash(),
                 nextHash,
-                lastHash
+                lastHash,
+                block.getNonce(),
+                block.getDifficulty(),
+                block.getTimestamp(),
+                transactionResources
+        );
+
+        // Add HATEOAS links
+        EntityModel<BlockResource> resource = EntityModel.of(blockResource);
+        resource.add(linkTo(methodOn(BlockController.class).getBlockByHash(block.getHash())).withSelfRel());
+        if (block.getPreviousHash() != null) {
+            resource.add(linkTo(methodOn(BlockController.class).getBlockByHash(block.getPreviousHash())).withRel("previousHash"));
+        }
+        if (nextHash != null) {
+            resource.add(linkTo(methodOn(BlockController.class).getBlockByHash(nextHash)).withRel("nextHash"));
+        }
+        if (lastHash != null) {
+            resource.add(linkTo(methodOn(BlockController.class).getBlockByHash(lastHash)).withRel("lastHash"));
+        }
+
+        return resource;
+    }
+
+    @Override
+    public List<TransactionResource> getTransactionsByBlockHash(String hash) {
+        Optional<BlockDAO> blockOptional = blockRepository.findById(hash);
+        if (!blockOptional.isPresent()) {
+            return null;
+        }
+
+        BlockDAO block = blockOptional.get();
+        // Ensure transactions are loaded
+        block.getTransactions().forEach(tx -> {
+            tx.getInputs().size();
+            tx.getOutputs().size();
+        });
+
+        return block.getTransactions().stream()
+                .map(this::mapToTransactionResource)
+                .collect(Collectors.toList());
+    }
+
+    private TransactionResource mapToTransactionResource(TransactionDAO tx) {
+        // Ensure inputs and outputs are loaded
+        tx.getInputs().size();
+        tx.getOutputs().size();
+
+        log.info("Mapping transaction: {}", tx.getTransactionId());
+        tx.getInputs().forEach(input -> log.info("Input: {}", input));
+        tx.getOutputs().forEach(output -> log.info("Output: {}", output));
+
+        List<TransactionInputResource> inputResources = tx.getInputs().stream()
+                .map(this::mapToInputResource)
+                .collect(Collectors.toList());
+
+        List<TransactionOutputResource> outputResources = tx.getOutputs().stream()
+                .map(this::mapToOutputResource)
+                .collect(Collectors.toList());
+
+        return new TransactionResource(tx.getTransactionId(), inputResources, outputResources);
+    }
+
+    private TransactionInputResource mapToInputResource(TransactionInput input) {
+        return new TransactionInputResource(
+                input.getId(),
+                input.getSourceTransactionId(),
+                input.getOutputIndex(),
+                input.getScriptSig()
+        );
+    }
+
+    private TransactionOutputResource mapToOutputResource(TransactionOutput output) {
+        return new TransactionOutputResource(
+                output.getId(),
+                output.getValue(),
+                output.getScriptPubKey()
         );
     }
 
     private String getNextHash(BlockDAO block) {
-        // Logic to get the next block hash (if exists)
-        // This might involve querying the database for a block with this block's hash as the previousHash
         Optional<BlockDAO> nextBlock = blockRepository.findAll().stream()
                 .filter(b -> b.getPreviousHash().equals(block.getHash()))
                 .findFirst();
@@ -56,12 +155,11 @@ public class BlockServiceImpl implements BlockService {
     }
 
     private String getLastHash() {
-        // Logic to get the last block hash
-        // This might involve querying the database for the block with the highest block height or timestamp
         return blockRepository.findAll().stream()
-                .reduce((first, second) -> second) // Get the last element in the list
+                .reduce((first, second) -> second)
                 .map(BlockDAO::getHash)
                 .orElse(null);
     }
 }
+
 

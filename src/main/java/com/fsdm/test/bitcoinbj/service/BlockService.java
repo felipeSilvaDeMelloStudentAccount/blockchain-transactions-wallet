@@ -1,7 +1,9 @@
 package com.fsdm.test.bitcoinbj.service;
 
+import com.fsdm.test.bitcoinbj.model.resource.BlockResource;
+import com.fsdm.test.bitcoinbj.model.resource.TransactionResource;
 import com.fsdm.test.bitcoinbj.model.transaction.BlockDAO;
-import com.fsdm.test.bitcoinbj.model.transaction.BlockDTO;
+import org.springframework.hateoas.EntityModel;
 
 import java.util.List;
 
@@ -10,5 +12,9 @@ public interface BlockService {
 
     BlockDAO getBlockByHash(String hash);
 
-    BlockDTO getFormattedBlockByHash(String hash);
+    EntityModel<BlockResource> getBlockResourceByHash(String hash);
+
+    List<TransactionResource> getTransactionsByBlockHash(String hash);
 }
+
+

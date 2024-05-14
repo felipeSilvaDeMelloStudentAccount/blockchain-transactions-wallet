@@ -1,4 +1,4 @@
-package com.fsdm.test.bitcoinbj.model;
+package com.fsdm.test.bitcoinbj.model.wallet;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

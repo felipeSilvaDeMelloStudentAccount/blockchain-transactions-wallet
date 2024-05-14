@@ -1,6 +1,6 @@
 package com.fsdm.test.bitcoinbj.repository;
 
-import com.fsdm.test.bitcoinbj.model.BitcoinWallet;
+import com.fsdm.test.bitcoinbj.model.wallet.BitcoinWallet;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

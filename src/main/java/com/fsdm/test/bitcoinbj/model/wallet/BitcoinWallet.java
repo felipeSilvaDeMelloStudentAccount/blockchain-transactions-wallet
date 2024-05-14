@@ -1,4 +1,4 @@
-package com.fsdm.test.bitcoinbj.model;
+package com.fsdm.test.bitcoinbj.model.wallet;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -17,11 +17,9 @@ import java.util.Date;
 @Table(name = "bitcoin_wallets")
 @Builder
 public class BitcoinWallet {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String address;
     private Long balance;
     private String privateKey;
@@ -38,3 +36,4 @@ public class BitcoinWallet {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
 }
+
