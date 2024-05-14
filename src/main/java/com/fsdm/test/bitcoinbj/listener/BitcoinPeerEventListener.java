@@ -42,11 +42,15 @@ public class BitcoinPeerEventListener implements PeerConnectedEventListener, Pee
         log.info("Block details: Nonce: {}, Difficulty: {}, Transactions: {}", block.getNonce(), block.getDifficultyTarget(), block.getTransactions().size());
 
         BlockDAO blockDAO = getBlockDAO(block);
-        try {
-            blockRepository.save(blockDAO);
-            log.info("Block saved: {}", block.getHashAsString());
-        } catch (Exception e) {
-            log.error("Error saving block: {}", e.getMessage(), e);
+        if (verifyBlockHash(block, blockDAO)) {
+            try {
+                blockRepository.save(blockDAO);
+                log.info("Block saved: {}", block.getHashAsString());
+            } catch (Exception e) {
+                log.error("Error saving block: {}", e.getMessage(), e);
+            }
+        } else {
+            log.error("Block hash verification failed for block: {}", block.getHashAsString());
         }
     }
 
@@ -94,5 +98,10 @@ public class BitcoinPeerEventListener implements PeerConnectedEventListener, Pee
             outputs.add(output);
         }
         return outputs;
+    }
+
+    private boolean verifyBlockHash(Block block, BlockDAO blockDAO) {
+        // Implement hash verification logic here
+        return block.getHashAsString().equals(blockDAO.getHash());
     }
 }
