@@ -1,5 +1,6 @@
 package com.fsdm.bitcoinbj.model.transaction;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,6 +23,6 @@ public class BlockDAO {
     private Instant timestamp;
 
     @OneToMany(mappedBy = "blockDAO", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<TransactionDAO> transactions;
 }
-

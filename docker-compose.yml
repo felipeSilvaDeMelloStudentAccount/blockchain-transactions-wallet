@@ -20,6 +20,3 @@ services:
     environment:
       PORT: 8080
       SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/blockchain_db
-      SPRING_DATASOURCE_USERNAME: blockchain
-      SPRING_DATASOURCE_PASSWORD: myPassword243OSOKpadpa

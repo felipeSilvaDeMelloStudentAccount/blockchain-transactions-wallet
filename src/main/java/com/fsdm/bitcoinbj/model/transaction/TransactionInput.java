@@ -1,5 +1,6 @@
 package com.fsdm.bitcoinbj.model.transaction;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,7 +21,7 @@ public class TransactionInput {
 
     @ManyToOne
     @JoinColumn(name = "transaction_id")
+    @JsonBackReference
     private TransactionDAO transactionDAO;
 }
-
 

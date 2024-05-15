@@ -8,11 +8,11 @@
         <version>3.2.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.fsdm.test</groupId>
-    <artifactId>blockchain-transactions-wallet</artifactId>
+    <groupId>com.fsdm</groupId>
+    <artifactId>blockchain-viewer</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>blockchain-transactions-wallet</name>
-    <description>Bitcoin Wallet Transactions</description>
+    <name>blockchain-viewer</name>
+    <description>Blockchain Viewer</description>
     <properties>
         <java.version>17</java.version>
     </properties>

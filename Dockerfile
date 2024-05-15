@@ -5,7 +5,7 @@ FROM openjdk:21-jdk
 WORKDIR /app
 
 # Copy the JAR file into the container at /app
-COPY target/blockchain-transactions-wallet-0.0.1-SNAPSHOT.jar /app/
+COPY target/blockchain-viewer-0.0.1-SNAPSHOT.jar /app/
 
 # Copy the wait-for-it.sh script into the container at /app
 COPY wait-for-it.sh /app/
@@ -17,4 +17,4 @@ RUN chmod +x wait-for-it.sh
 EXPOSE 8333
 
 # Specify the command to run your application
-CMD ["./wait-for-it.sh", "postgres:5432", "--", "java", "-jar", "blockchain-transactions-wallet-0.0.1-SNAPSHOT.jar", "--server.port=${PORT}", "--server.servlet.context-path=/api/bitcoin"]
+CMD ["./wait-for-it.sh", "postgres:5432", "--", "java", "-jar", "blockchain-viewer-0.0.1-SNAPSHOT.jar", "--spring.profiles.active=docker"]
