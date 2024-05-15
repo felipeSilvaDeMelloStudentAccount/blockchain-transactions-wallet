@@ -13,5 +13,8 @@ COPY wait-for-it.sh /app/
 # Set execution permissions for the script
 RUN chmod +x wait-for-it.sh
 
+# Expose port 8333 for Bitcoin network communication
+EXPOSE 8333
+
 # Specify the command to run your application
 CMD ["./wait-for-it.sh", "postgres:5432", "--", "java", "-jar", "blockchain-transactions-wallet-0.0.1-SNAPSHOT.jar", "--server.port=${PORT}", "--server.servlet.context-path=/api/bitcoin"]

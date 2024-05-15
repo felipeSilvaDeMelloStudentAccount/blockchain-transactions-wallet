@@ -15,11 +15,13 @@ spring:
     driver-class-name: ${DB_DRIVER:org.postgresql.Driver}
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   flyway:
+    enabled: true
+    locations: classpath:db/migration
     baselineOnMigrate: true
 
 bitcoin:
@@ -33,6 +35,10 @@ logging:
 
 ---
 
+server:
+  port: ${PORT:9001}
+  servlet:
+    context-path: /api/bitcoin
 spring:
   config:
     activate:
@@ -50,3 +56,36 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   flyway:
     baselineOnMigrate: true
+    locations: classpath:db/migration
+
+bitcoin:
+  network: org.bitcoin.production
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+  application:
+    name: Bitcoin Wallet Service - Development
+  profiles:
+    active: dev
+  datasource:
+    url: jdbc:postgresql://localhost:5432/blockchain_db
+    username: blockchain
+    password: myPassword243OSOKpadpa
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baselineOnMigrate: true
+
+bitcoin:
+  network: org.bitcoin.production
