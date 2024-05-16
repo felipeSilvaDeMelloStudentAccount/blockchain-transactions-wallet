@@ -20,6 +20,8 @@ spring:
     enabled: false
 bitcoin:
   network: org.bitcoin.test
+  targetNode: seed.bitcoin.sipa.be
+  port: 8333
 
 logging:
   level:

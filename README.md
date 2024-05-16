@@ -11,6 +11,7 @@ This application is a simplified Bitcoin blockchain viewer that displays blocks 
 - Continuously listen to the Bitcoin network for new blocks.
 - Robust connection management with retry logic.
 - Swagger UI for API documentation and testing.
+- Actuator endpoints for health checks and metrics.
 
 ## Technologies Used
 
@@ -19,8 +20,10 @@ This application is a simplified Bitcoin blockchain viewer that displays blocks 
 - **PostgreSQL**: Database for storing blockchain data.
 - **Hibernate**: ORM tool for database interactions.
 - **Flyway**: Database migration tool.
+- **Docker**: Containerization tool for packaging the application.
 - **Maven**: Build automation tool for managing dependencies and building the project.
 - **Swagger**: API documentation and testing tool.
+- **Spring Boot Actuator**: For monitoring and managing the application.
 
 ## Setup
 
@@ -28,15 +31,17 @@ This application is a simplified Bitcoin blockchain viewer that displays blocks 
 
 - Java 21 or higher
 - Maven
-- PostgreSQL running on `localhost:5432` with the following configuration:
-    - **URL**: `jdbc:postgresql://localhost:5432/blockchain_db`
-    - **Username**: `blockchain`
-    - **Password**: `myPassword243OSOKpadpa`
-    - **Driver Class Name**: `org.postgresql.Driver`
+- PostgreSQL
+- Docker (optional, for containerized deployment)
 
-### Database Setup
+### PostgreSQL Configuration
 
-Ensure you have a PostgreSQL database running and configured as per the above settings.
+Ensure you have PostgreSQL running with the following configurations:
+- URL: `jdbc:postgresql://localhost:5432/blockchain_db`
+- Username: `blockchain`
+- Password: `myPassword243OSOKpadpa`
+- Driver: `org.postgresql.Driver`
+
 
 ### Clone the Repository
 

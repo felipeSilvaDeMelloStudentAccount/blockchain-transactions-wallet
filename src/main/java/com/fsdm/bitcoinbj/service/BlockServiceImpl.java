@@ -17,6 +17,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -43,14 +44,11 @@ public class BlockServiceImpl implements BlockService {
         }
 
         BlockDAO block = blockOptional.get();
-        block.getTransactions().size(); // Ensure transactions are loaded
 
         String nextHash = getNextHash(block);
         String lastHash = getLastHash();
 
-        List<TransactionResource> transactionResources = block.getTransactions().stream()
-                .map(this::mapToTransactionResource)
-                .collect(Collectors.toList());
+        List<TransactionResource> transactionResources = block.getTransactions().stream().map(this::mapToTransactionResource).collect(Collectors.toList());
 
         BlockResource blockResource = new BlockResource(
                 block.getHash(),
@@ -84,7 +82,7 @@ public class BlockServiceImpl implements BlockService {
     public List<TransactionResource> getTransactionsByBlockHash(String hash) {
         Optional<BlockDAO> blockOptional = blockRepository.findById(hash);
         if (!blockOptional.isPresent()) {
-            return null;
+            return Collections.emptyList();
         }
 
         BlockDAO block = blockOptional.get();
@@ -96,9 +94,6 @@ public class BlockServiceImpl implements BlockService {
     }
 
     private TransactionResource mapToTransactionResource(TransactionDAO tx) {
-        tx.getInputs().size();  // Ensure inputs are loaded
-        tx.getOutputs().size(); // Ensure outputs are loaded
-
         List<TransactionInputResource> inputResources = tx.getInputs().stream()
                 .map(this::mapToInputResource)
                 .collect(Collectors.toList());

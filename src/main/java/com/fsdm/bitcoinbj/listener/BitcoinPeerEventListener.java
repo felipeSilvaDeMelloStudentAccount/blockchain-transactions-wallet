@@ -5,6 +5,7 @@ import com.fsdm.bitcoinbj.model.transaction.TransactionDAO;
 import com.fsdm.bitcoinbj.model.transaction.TransactionInput;
 import com.fsdm.bitcoinbj.model.transaction.TransactionOutput;
 import com.fsdm.bitcoinbj.repository.BlockRepository;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bitcoinj.core.Block;
 import org.bitcoinj.core.FilteredBlock;
@@ -12,7 +13,6 @@ import org.bitcoinj.core.Peer;
 import org.bitcoinj.core.listeners.BlocksDownloadedEventListener;
 import org.bitcoinj.core.listeners.PeerConnectedEventListener;
 import org.bitcoinj.core.listeners.PeerDisconnectedEventListener;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,9 +22,9 @@ import java.util.List;
 
 @Component
 @Slf4j
+@AllArgsConstructor
 public class BitcoinPeerEventListener implements PeerConnectedEventListener, PeerDisconnectedEventListener, BlocksDownloadedEventListener {
 
-    @Autowired
     private BlockRepository blockRepository;
 
     @Override
@@ -68,9 +68,9 @@ public class BitcoinPeerEventListener implements PeerConnectedEventListener, Pee
         log.info("Processing block: {}", block.getHashAsString());
 
         for (org.bitcoinj.core.Transaction tx : block.getTransactions()) {
-            log.info("Processing transaction: {}", tx.getHashAsString());
+            log.info("Processing transaction: {}", tx.getTxId().toString());
             TransactionDAO domainTx = new TransactionDAO();
-            domainTx.setTransactionId(tx.getHashAsString());
+            domainTx.setTransactionId(tx.getTxId().toString());
             domainTx.setBlockDAO(blockDAO);
             domainTx.setInputs(getTransactionInputs(tx.getInputs(), domainTx));
             domainTx.setOutputs(getTransactionOutputs(tx.getOutputs(), domainTx));
