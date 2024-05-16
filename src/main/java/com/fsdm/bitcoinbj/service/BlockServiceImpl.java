@@ -29,12 +29,10 @@ public class BlockServiceImpl implements BlockService {
     @Autowired
     private BlockRepository blockRepository;
 
-
     @Override
     public Page<BlockDAO> getAllBlocks(Pageable pageable) {
         return blockRepository.findAll(pageable);
     }
-    
 
     @Override
     @Transactional

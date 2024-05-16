@@ -88,6 +88,7 @@ public class BitcoinPeerEventListener implements PeerConnectedEventListener, Pee
             input.setScriptSig(btcInput.getScriptSig().toString());
             input.setTransactionDAO(domainTx);
             inputs.add(input);
+            log.info("Processed transaction input: {}", input);
         }
         return inputs;
     }
@@ -100,11 +101,14 @@ public class BitcoinPeerEventListener implements PeerConnectedEventListener, Pee
             output.setScriptPubKey(btcOutput.getScriptPubKey().toString());
             output.setTransactionDAO(domainTx);
             outputs.add(output);
+            log.info("Processed transaction output: {}", output);
         }
         return outputs;
     }
 
     private boolean verifyBlockHash(Block block, BlockDAO blockDAO) {
-        return block.getHashAsString().equals(blockDAO.getHash());
+        boolean isValid = block.getHashAsString().equals(blockDAO.getHash());
+        log.info("Block hash verification for block {}: {}", block.getHashAsString(), isValid);
+        return isValid;
     }
 }

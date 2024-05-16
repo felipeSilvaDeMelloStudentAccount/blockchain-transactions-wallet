@@ -1,47 +1,22 @@
 version: '3.8'
-
-networks:
-  bitcoin_network:
-    driver: bridge
-
 services:
   postgres:
     image: postgres:latest
     environment:
-      POSTGRES_DB: blockchain_db
       POSTGRES_USER: blockchain
       POSTGRES_PASSWORD: myPassword243OSOKpadpa
-    networks:
-      - bitcoin_network
+      POSTGRES_DB: blockchain_db
     ports:
       - "5432:5432"
     volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql  # Mount the init.sql script
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U blockchain -d blockchain_db"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
   bitcoin-wallet:
     build: .
-    networks:
-      - bitcoin_network
     ports:
-      - "8000:8000"
+      - "8080:8080"
     depends_on:
-      postgres:
-        condition: service_healthy
+      - postgres
     environment:
+      PORT: 8080
       SPRING_PROFILES_ACTIVE: docker
-      URL: jdbc:postgresql://postgres:5432/blockchain_db
-      USERNAME: blockchain
-      PASSWORD: myPassword243OSOKpadpa
-      DB_DRIVER: org.postgresql.Driver
-      BITCOIN_NETWORK: org.bitcoin.production
-      PORT: 8000
-    command: >
-      sh -c "./wait-for-it.sh postgres:5432 -- 
-      java -jar blockchain-transactions-wallet-0.0.1-SNAPSHOT.jar 
-      --server.port=${PORT} 
-      --server.servlet.context-path=/api/bitcoin"

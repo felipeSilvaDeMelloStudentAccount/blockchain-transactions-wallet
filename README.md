@@ -19,7 +19,6 @@ This application is a simplified Bitcoin blockchain viewer that displays blocks 
 - **PostgreSQL**: Database for storing blockchain data.
 - **Hibernate**: ORM tool for database interactions.
 - **Flyway**: Database migration tool.
-- **Docker**: Containerization tool for packaging the application.
 - **Maven**: Build automation tool for managing dependencies and building the project.
 - **Swagger**: API documentation and testing tool.
 
@@ -29,70 +28,67 @@ This application is a simplified Bitcoin blockchain viewer that displays blocks 
 
 - Java 21 or higher
 - Maven
-- PostgreSQL
-- Docker (optional, for containerized deployment)
+- PostgreSQL running on `localhost:5432` with the following configuration:
+    - **URL**: `jdbc:postgresql://localhost:5432/blockchain_db`
+    - **Username**: `blockchain`
+    - **Password**: `myPassword243OSOKpadpa`
+    - **Driver Class Name**: `org.postgresql.Driver`
 
-# Running the Application
-### Clone the repository:
-```bash
-  git clone https://github.com/felipeSilvaDeMelloStudentAccount/blockchain-transactions-wallet
-  cd <repository_directory>
-```
+### Database Setup
 
-## Using Maven
-### Build the project:
-```bash
-  mvn clean install
-``` 
-### Run the application:
-```bash
-  mvn spring-boot:run
-```
+Ensure you have a PostgreSQL database running and configured as per the above settings.
 
-## Using Docker
-### Build the Docker image:
+### Clone the Repository
+
 ```bash
-  docker build -t blockchain-viewer .
+git clone https://github.com/felipeSilvaDeMelloStudentAccount/blockchain-transactions-wallet
+cd blockchain-transactions-wallet
 ```
-### Run the Docker container:
+### Build the Project
+```bash 
+mvn clean install
+```
+### Run the Application
 ```bash
-  docker run -p 8000:8000 blockchain-viewer
+mvn spring-boot:run
 ```
 
-## Using Java
-### Build the project:
-```bash
-  mvn clean install
-```
+### Notes
+- Ensure PostgresSQL is running and accessible with the provided configuration.
+- Maven is required to build and run the application.
 
-### Run the JAR file:
-```bash
-  java -jar target/blockchain-viewer-0.0.1-SNAPSHOT.jar
-```
+
+## Accessing Swagger UI
+Once the application is running, you can access the Swagger UI at:
+- **Swagger UI**: http://localhost:9001/api/bitcoin/swagger-ui/index.html
+- **API Docs**: http://localhost:9001/api/bitcoin/v3/api-docs
+
+## Actuator Endpoints
+Spring Boot Actuator endpoints can be accessed for application monitoring:
+
+**Actuator**: http://localhost:9001/actuator
 
 # API Endpoints
-- GET /api/bitcoin/blocks: List all blocks.
-- GET /api/bitcoin/blocks/{hash}: Get details of a specific block by hash.
-- GET /api/bitcoin/blocks/{hash}/transactions: List transactions of a specific block by hash.
+- **GET /api/bitcoin/blocks**: List all blocks.
+- **GET /api/bitcoin/blocks/{hash}**: Get details of a specific block by hash.
+- **GET /api/bitcoin/blocks/{hash}/transactions**: List transactions of a specific block by hash.
 
+# Achievement the Challenge
+## Connecting to the Bitcoin Network
+- The application connects to the Bitcoin network to receive broadcasted blocks and transactions.
 
-# Achieving the Requirements
-## This API achieves the requirements by:
+## Storing Data in PostgreSQL
+- The blocks and transactions are stored in a PostgreSQL database, ensuring persistence and efficient querying.
 
-### Connecting to the Bitcoin Network
-The application connects to the Bitcoin network to receive broadcasted blocks and transactions.
+## Using Spring Boot for REST API
+- Spring Boot provides a robust framework for developing RESTful web services, making it easy to create endpoints for accessing blockchain data.
 
-### Storing Data in PostgreSQL
-The blocks and transactions are stored in a PostgreSQL database, ensuring persistence and efficient querying.
+## Managing Database Schema with Flyway
+- Flyway is used for database migrations, ensuring that the database schema is up-to-date and consistent.
 
-### Using Spring Boot for REST API
-Spring Boot provides a robust framework for developing RESTful web services, making it easy to create endpoints for accessing blockchain data.
+## Swagger UI for API Documentation
+- Swagger UI is integrated for API documentation and testing, making it easy for developers to understand and interact with the API.
 
-### Managing Database Schema with Flyway
-Flyway is used for database migrations, ensuring that the database schema is up-to-date and consistent.
+## Continuous Listening for New Blocks
+- The application continuously listens to the Bitcoin network for new blocks, ensuring that it always has the latest data.
 
-### Swagger UI for API Documentation
-Swagger UI is integrated for API documentation and testing, making it easy for developers to understand and interact with the API.
-
-### Continuous Listening for New Blocks
-The application continuously listens to the Bitcoin network for new blocks, ensuring that it always has the latest data.
