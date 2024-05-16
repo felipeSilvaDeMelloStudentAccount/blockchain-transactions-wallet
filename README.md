@@ -1,3 +1,11 @@
+# Secure Systems Development
+### Assignment 3, Option A: Bitcoin blockchain viewer
+### Weight: 30%
+### Student Info
+- Felipe Silva de Mello
+-  D23125661
+
+
 # Bitcoin Blockchain Viewer
 
 ## Overview
@@ -93,21 +101,22 @@ Spring Boot Actuator endpoints can be accessed for application monitoring:
 - **GET /api/bitcoin/blocks/{hash}/transactions**: List transactions of a specific block by hash.
 
 # Achievement the Challenge
-## Connecting to the Bitc oin Network
+## Connecting to the Bitcoin Network - 10 marks
 - The application connects to the Bitcoin network to receive broadcasted blocks and transactions.
+### Continuous Listening for New Blocks
+- The application continuously listens to the Bitcoin network for new blocks, ensuring that it always has the latest data.
 
-## Storing Data in PostgreSQL
+## Storing Data in PostgreSQL and Parsing Transactions - 10 marks
 - The blocks and transactions are stored in a PostgreSQL database, ensuring persistence and efficient querying.
-
-## Using Spring Boot for REST API
-- Spring Boot provides a robust framework for developing RESTful web services, making it easy to create endpoints for accessing blockchain data.
-
-## Managing Database Schema with Flyway
+### Managing Database Schema with Flyway
 - Flyway is used for database migrations, ensuring that the database schema is up-to-date and consistent.
 
-## Swagger UI for API Documentation
+## Using Spring Boot for REST API to display blockchain data - 5 marks
+- Spring Boot provides a robust framework for developing RESTful web services, making it easy to create endpoints for accessing blockchain data.
+
+
+## README file with clear instructions - 5 marks
+### Swagger UI for API Documentation 
 - Swagger UI is integrated for API documentation and testing, making it easy for developers to understand and interact with the API.
 
-## Continuous Listening for New Blocks
-- The application continuously listens to the Bitcoin network for new blocks, ensuring that it always has the latest data.
 
