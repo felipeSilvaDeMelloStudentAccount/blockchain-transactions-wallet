@@ -1,3 +1,11 @@
+# Secure Systems Development
+### Assignment 3, Option A: Bitcoin blockchain viewer
+### Weight: 30%
+### Student Info
+- Felipe Silva de Mello
+-  D23125661
+
+
 # Bitcoin Blockchain Viewer
 
 ## Overview
@@ -34,15 +42,6 @@ This application is a simplified Bitcoin blockchain viewer that displays blocks 
 - PostgreSQL
 - Docker (optional, for containerized deployment)
 
-### PostgreSQL Configuration
-
-Ensure you have PostgreSQL running with the following configurations:
-- URL: `jdbc:postgresql://localhost:5432/blockchain_db`
-- Username: `blockchain`
-- Password: `myPassword243OSOKpadpa`
-- Driver: `org.postgresql.Driver`
-
-
 ### Clone the Repository
 
 ```bash
@@ -53,15 +52,38 @@ cd blockchain-transactions-wallet
 ```bash 
 mvn clean install
 ```
+
+## Running with Docker
+Docker simplifies the setup by handling the database configuration and dependencies.
+### Build the Docker Image:
+```bash 
+docker-compose up --build
+```
+#### Note
+- Docker will handle the PostgreSQL setup and configuration.
+- The application will be available on port 8080.
+- **GET http://localhost:8080/api/bitcoin/blocks**: List all blocks.
+
+
+## Running with Maven and PostgreSQL
+### PostgreSQL Configuration
+Ensure you have PostgreSQL running with the following configurations:
+- URL: `jdbc:postgresql://localhost:5432/blockchain_db`
+- Username: `blockchain`
+- Password: `myPassword243OSOKpadpa`
+- Driver: `org.postgresql.Driver`
 ### Run the Application
 ```bash
 mvn spring-boot:run
 ```
 
+
+
 ### Notes
 - Ensure PostgresSQL is running and accessible with the provided configuration.
 - Maven is required to build and run the application.
-
+- The application will be available on port 9001. 
+-- **GET http://localhost:9001/api/bitcoin/blocks**: List all blocks.
 
 ## Accessing Swagger UI
 Once the application is running, you can access the Swagger UI at:
@@ -79,21 +101,22 @@ Spring Boot Actuator endpoints can be accessed for application monitoring:
 - **GET /api/bitcoin/blocks/{hash}/transactions**: List transactions of a specific block by hash.
 
 # Achievement the Challenge
-## Connecting to the Bitcoin Network
+## Connecting to the Bitcoin Network - 10 marks
 - The application connects to the Bitcoin network to receive broadcasted blocks and transactions.
+### Continuous Listening for New Blocks
+- The application continuously listens to the Bitcoin network for new blocks, ensuring that it always has the latest data.
 
-## Storing Data in PostgreSQL
+## Storing Data in PostgreSQL and Parsing Transactions - 10 marks
 - The blocks and transactions are stored in a PostgreSQL database, ensuring persistence and efficient querying.
-
-## Using Spring Boot for REST API
-- Spring Boot provides a robust framework for developing RESTful web services, making it easy to create endpoints for accessing blockchain data.
-
-## Managing Database Schema with Flyway
+### Managing Database Schema with Flyway
 - Flyway is used for database migrations, ensuring that the database schema is up-to-date and consistent.
 
-## Swagger UI for API Documentation
+## Using Spring Boot for REST API to display blockchain data - 5 marks
+- Spring Boot provides a robust framework for developing RESTful web services, making it easy to create endpoints for accessing blockchain data.
+
+
+## README file with clear instructions - 5 marks
+### Swagger UI for API Documentation 
 - Swagger UI is integrated for API documentation and testing, making it easy for developers to understand and interact with the API.
 
-## Continuous Listening for New Blocks
-- The application continuously listens to the Bitcoin network for new blocks, ensuring that it always has the latest data.
 

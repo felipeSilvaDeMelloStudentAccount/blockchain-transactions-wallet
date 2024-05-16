@@ -20,6 +20,13 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class Overview: This class listens for events from Bitcoin peers, such as when peers connect, disconnect, and when blocks are downloaded.
+ * It processes the downloaded blocks and transactions, and saves them to a PostgreSQL database.
+ * implements PeerConnectedEventListener, PeerDisconnectedEventListener, and BlocksDownloadedEventListener
+ * to respond to Bitcoin network events.
+ *
+ */
 @Component
 @Slf4j
 @AllArgsConstructor
@@ -27,16 +34,38 @@ public class BitcoinPeerEventListener implements PeerConnectedEventListener, Pee
 
     private BlockRepository blockRepository;
 
+    /**
+     * Handles the event when a peer is connected.
+     *
+     * @param peer      the connected peer
+     * @param peerCount the total number of connected peers
+     */
     @Override
     public void onPeerConnected(Peer peer, int peerCount) {
         log.info("Connected to peer: {}", peer);
     }
 
+    /**
+     * Handles the event when a peer is disconnected.
+     *
+     * @param peer      the disconnected peer
+     * @param peerCount the total number of connected peers
+     */
     @Override
     public void onPeerDisconnected(Peer peer, int peerCount) {
         log.info("Disconnected from peer: {}", peer);
     }
 
+
+    /**
+     * Handles the event when blocks are downloaded from a peer. This method is annotated with @Transactional to ensure
+     * that the database operations are performed within a transaction context.
+     *
+     * @param peer          the peer from which the block was downloaded
+     * @param block         the downloaded block
+     * @param filteredBlock the filtered block
+     * @param blocksLeft    the number of blocks left to download
+     */
     @Override
     @Transactional
     public void onBlocksDownloaded(Peer peer, Block block, FilteredBlock filteredBlock, int blocksLeft) {
@@ -56,6 +85,12 @@ public class BitcoinPeerEventListener implements PeerConnectedEventListener, Pee
         }
     }
 
+    /**
+     * Converts a BitcoinJ Block object to a BlockDAO object for database storage.
+     *
+     * @param block the BitcoinJ block
+     * @return the BlockDAO object
+     */
     private static BlockDAO getBlockDAO(Block block) {
         BlockDAO blockDAO = new BlockDAO();
         blockDAO.setHash(block.getHashAsString());
@@ -79,6 +114,13 @@ public class BitcoinPeerEventListener implements PeerConnectedEventListener, Pee
         return blockDAO;
     }
 
+    /**
+     * Converts a list of BitcoinJ TransactionInput objects to a list of TransactionInput objects for database storage.
+     *
+     * @param btcInputs the list of BitcoinJ transaction inputs
+     * @param domainTx  the TransactionDAO object to which the inputs belong
+     * @return the list of TransactionInput objects
+     */
     private static List<TransactionInput> getTransactionInputs(List<org.bitcoinj.core.TransactionInput> btcInputs, TransactionDAO domainTx) {
         List<TransactionInput> inputs = new ArrayList<>();
         for (org.bitcoinj.core.TransactionInput btcInput : btcInputs) {
@@ -93,6 +135,13 @@ public class BitcoinPeerEventListener implements PeerConnectedEventListener, Pee
         return inputs;
     }
 
+    /**
+     * Converts a list of BitcoinJ TransactionOutput objects to a list of TransactionOutput objects for database storage.
+     *
+     * @param btcOutputs the list of BitcoinJ transaction outputs
+     * @param domainTx   the TransactionDAO object to which the outputs belong
+     * @return the list of TransactionOutput objects
+     */
     private static List<TransactionOutput> getTransactionOutputs(List<org.bitcoinj.core.TransactionOutput> btcOutputs, TransactionDAO domainTx) {
         List<TransactionOutput> outputs = new ArrayList<>();
         for (org.bitcoinj.core.TransactionOutput btcOutput : btcOutputs) {
@@ -106,6 +155,13 @@ public class BitcoinPeerEventListener implements PeerConnectedEventListener, Pee
         return outputs;
     }
 
+    /**
+     * Verifies that the hash of a BitcoinJ Block matches the hash stored in a BlockDAO object.
+     *
+     * @param block    the BitcoinJ block
+     * @param blockDAO the BlockDAO object
+     * @return true if the hashes match, false otherwise
+     */
     private boolean verifyBlockHash(Block block, BlockDAO blockDAO) {
         boolean isValid = block.getHashAsString().equals(blockDAO.getHash());
         log.info("Block hash verification for block {}: {}", block.getHashAsString(), isValid);
