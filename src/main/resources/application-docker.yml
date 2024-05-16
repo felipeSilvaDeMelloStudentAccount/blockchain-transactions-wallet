@@ -21,3 +21,5 @@ spring:
 
 bitcoin:
   network: org.bitcoin.production
+  targetNode: seed.bitcoin.sipa.be
+  port: 8080

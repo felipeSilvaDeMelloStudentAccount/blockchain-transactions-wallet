@@ -15,6 +15,7 @@ RUN chmod +x wait-for-it.sh
 
 # Expose port 8333 for Bitcoin network communication
 EXPOSE 8333
+EXPOSE 8080
 
 # Specify the command to run your application
 CMD ["./wait-for-it.sh", "postgres:5432", "--", "java", "-jar", "blockchain-viewer-0.0.1-SNAPSHOT.jar", "--spring.profiles.active=docker"]

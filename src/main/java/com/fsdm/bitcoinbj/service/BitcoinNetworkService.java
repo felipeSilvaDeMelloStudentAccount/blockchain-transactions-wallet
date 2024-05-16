@@ -13,15 +13,18 @@ import org.bitcoinj.core.BlockChain;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.core.PeerAddress;
 import org.bitcoinj.core.PeerGroup;
+import org.bitcoinj.core.Transaction;
 import org.bitcoinj.net.NioClientManager;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.store.BlockStore;
 import org.bitcoinj.store.MemoryBlockStore;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -29,15 +32,15 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class BitcoinNetworkService {
-    private static final String TARGET_NODE = "seed.bitcoin.sipa.be";
-    private static final int PORT = 8333;
-    private PeerGroup peerGroup;
-    private BlockChain blockChain;
-    private final NioClientManager clientManager = new NioClientManager();
+    @Value("${bitcoin.targetNode}")
+    private String targetNode;
+    @Value("${bitcoin.port}")
+    private int port;
 
+    private PeerGroup peerGroup;
+    private final NioClientManager clientManager = new NioClientManager();
     @Autowired
     private BitcoinPeerEventListener bitcoinPeerEventListener;
-
     @Autowired
     private BlockRepository blockRepository;
 
@@ -56,17 +59,15 @@ public class BitcoinNetworkService {
                 attempt++;
                 NetworkParameters networkParameters = MainNetParams.get();
                 BlockStore blockStore = new MemoryBlockStore(networkParameters);
-                this.blockChain = new BlockChain(networkParameters, blockStore);
+                BlockChain blockChain = new BlockChain(networkParameters, blockStore);
 
                 this.peerGroup = new PeerGroup(networkParameters, blockChain);
-                InetAddress seedAddress = InetAddress.getByName(TARGET_NODE);
-                this.peerGroup.addAddress(new PeerAddress(networkParameters, seedAddress, PORT));
+                InetAddress seedAddress = InetAddress.getByName(targetNode);
+                this.peerGroup.addAddress(new PeerAddress(networkParameters, seedAddress, port));
 
                 this.peerGroup.addConnectedEventListener(bitcoinPeerEventListener);
                 this.peerGroup.addDisconnectedEventListener(bitcoinPeerEventListener);
-                this.peerGroup.addBlocksDownloadedEventListener((peer, block, filteredBlock, blocksLeft) -> {
-                    saveBlock(block);
-                });
+                this.peerGroup.addBlocksDownloadedEventListener((peer, block, filteredBlock, blocksLeft) -> saveBlock(block));
 
                 this.peerGroup.start();
                 CompletableFuture.runAsync(() -> {
@@ -113,34 +114,32 @@ public class BitcoinNetworkService {
                 .timestamp(block.getTime().toInstant())
                 .build();
 
-        List<TransactionDAO> transactionDAOs = block.getTransactions().stream().map(tx -> {
+        List<TransactionDAO> transactionDAOs = new ArrayList<>();
+        for (Transaction transaction : block.getTransactions()) {
             TransactionDAO transactionDAO = TransactionDAO.builder()
-                    .transactionId(tx.getHashAsString())
+                    .transactionId(transaction.getTxId().toString())
                     .blockDAO(blockDAO)
                     .build();
 
-            List<TransactionInput> inputs = tx.getInputs().stream().map(input -> {
-                return TransactionInput.builder()
-                        .sourceTransactionId(input.getOutpoint().getHash().toString())
-                        .outputIndex((int) input.getOutpoint().getIndex())
-                        .scriptSig(input.getScriptSig().toString())
-                        .transactionDAO(transactionDAO)
-                        .build();
-            }).collect(Collectors.toList());
+            List<TransactionInput> inputs = transaction.getInputs().stream().map(input -> TransactionInput.builder()
+                    .sourceTransactionId(input.getOutpoint().getHash().toString())
+                    .outputIndex((int) input.getOutpoint().getIndex())
+                    .scriptSig(input.getScriptSig().toString())
+                    .transactionDAO(transactionDAO)
+                    .build()).collect(Collectors.toList());
 
-            List<TransactionOutput> outputs = tx.getOutputs().stream().map(output -> {
-                return TransactionOutput.builder()
-                        .value(output.getValue().toBtc())
-                        .scriptPubKey(output.getScriptPubKey().toString())
-                        .transactionDAO(transactionDAO)
-                        .build();
-            }).collect(Collectors.toList());
+            List<TransactionOutput> outputs = transaction.getOutputs().stream().map(output -> TransactionOutput.builder()
+                    .value(output.getValue().toBtc())
+                    .scriptPubKey(output.getScriptPubKey().toString())
+                    .transactionDAO(transactionDAO)
+                    .build()).collect(Collectors.toList());
 
             transactionDAO.setInputs(inputs);
             transactionDAO.setOutputs(outputs);
 
-            return transactionDAO;
-        }).collect(Collectors.toList());
+            TransactionDAO apply = transactionDAO;
+            transactionDAOs.add(apply);
+        }
 
         blockDAO.setTransactions(transactionDAOs);
         blockRepository.save(blockDAO);
