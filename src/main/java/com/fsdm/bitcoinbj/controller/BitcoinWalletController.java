@@ -2,6 +2,8 @@ package com.fsdm.bitcoinbj.controller;
 
 import com.fsdm.bitcoinbj.model.wallet.BitcoinWallet;
 import com.fsdm.bitcoinbj.service.BitcoinWalletService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,15 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/wallets")
 @AllArgsConstructor
+@Tag(name = "Wallets", description = "Bitcoin wallet management APIs")
 public class BitcoinWalletController {
     private final BitcoinWalletService bitcoinWalletService;
 
-    /**
-     * Create a new wallet
-     *
-     * @return Wallet   Wallet object
-     */
     @PostMapping
+    @Operation(summary = "Create wallet", description = "Create a new Bitcoin wallet")
     public ResponseEntity<?> createWallet() {
         try {
             BitcoinWallet bitcoinWallet = bitcoinWalletService.createWallet();
@@ -30,4 +29,5 @@ public class BitcoinWalletController {
         }
     }
 }
+
 
