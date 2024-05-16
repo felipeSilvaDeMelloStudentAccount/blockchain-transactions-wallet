@@ -34,15 +34,6 @@ This application is a simplified Bitcoin blockchain viewer that displays blocks 
 - PostgreSQL
 - Docker (optional, for containerized deployment)
 
-### PostgreSQL Configuration
-
-Ensure you have PostgreSQL running with the following configurations:
-- URL: `jdbc:postgresql://localhost:5432/blockchain_db`
-- Username: `blockchain`
-- Password: `myPassword243OSOKpadpa`
-- Driver: `org.postgresql.Driver`
-
-
 ### Clone the Repository
 
 ```bash
@@ -53,15 +44,38 @@ cd blockchain-transactions-wallet
 ```bash 
 mvn clean install
 ```
+
+## Running with Docker
+Docker simplifies the setup by handling the database configuration and dependencies.
+### Build the Docker Image:
+```bash 
+docker-compose up --build
+```
+#### Note
+- Docker will handle the PostgreSQL setup and configuration.
+- The application will be available on port 8080.
+- **GET http://localhost:8080/api/bitcoin/blocks**: List all blocks.
+
+
+## Running with Maven and PostgreSQL
+### PostgreSQL Configuration
+Ensure you have PostgreSQL running with the following configurations:
+- URL: `jdbc:postgresql://localhost:5432/blockchain_db`
+- Username: `blockchain`
+- Password: `myPassword243OSOKpadpa`
+- Driver: `org.postgresql.Driver`
 ### Run the Application
 ```bash
 mvn spring-boot:run
 ```
 
+
+
 ### Notes
 - Ensure PostgresSQL is running and accessible with the provided configuration.
 - Maven is required to build and run the application.
-
+- The application will be available on port 9001. 
+-- **GET http://localhost:9001/api/bitcoin/blocks**: List all blocks.
 
 ## Accessing Swagger UI
 Once the application is running, you can access the Swagger UI at:
@@ -79,7 +93,7 @@ Spring Boot Actuator endpoints can be accessed for application monitoring:
 - **GET /api/bitcoin/blocks/{hash}/transactions**: List transactions of a specific block by hash.
 
 # Achievement the Challenge
-## Connecting to the Bitcoin Network
+## Connecting to the Bitc oin Network
 - The application connects to the Bitcoin network to receive broadcasted blocks and transactions.
 
 ## Storing Data in PostgreSQL
