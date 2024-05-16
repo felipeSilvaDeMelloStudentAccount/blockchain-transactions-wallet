@@ -29,26 +29,50 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+/**
+ * This class manages the connection to the Bitcoin network.
+ * It connects to the network, listens for new blocks, processes them,
+ * and saves the block and transaction data to a PostgreSQL database.
+ */
 @Service
 @Slf4j
 public class BitcoinNetworkService {
+    // The target node address for the Bitcoin network.
     @Value("${bitcoin.targetNode}")
     private String targetNode;
+
+    //The port number for the Bitcoin network.
     @Value("${bitcoin.port}")
     private int port;
 
+    //The peer group for managing connections to Bitcoin peers.
     private PeerGroup peerGroup;
+
+    //The NioClientManager for managing network connections.
     private final NioClientManager clientManager = new NioClientManager();
+
+    //Event listener for peer-related events.
     @Autowired
     private BitcoinPeerEventListener bitcoinPeerEventListener;
+
+    //A Spring Data JPA repository for performing CRUD operations on BlockDAO objects.
     @Autowired
     private BlockRepository blockRepository;
 
+    /**
+     * Initializes the service by connecting to the Bitcoin network.
+     * This method is called after the bean is constructed.
+     */
     @PostConstruct
     public void start() {
         connectToNetwork();
     }
 
+    /**
+     * Connects to the Bitcoin network asynchronously with retry logic.
+     *
+     * @return a CompletableFuture that completes when the connection is established
+     */
     @Async
     public CompletableFuture<Void> connectToNetwork() {
         int maxRetries = 5;
@@ -95,6 +119,10 @@ public class BitcoinNetworkService {
         return CompletableFuture.completedFuture(null);
     }
 
+    /**
+     * Stops the service and disconnects from the Bitcoin network.
+     * This method is called before the bean is destroyed.
+     */
     @PreDestroy
     public void stop() {
         if (this.peerGroup != null) {
@@ -105,6 +133,11 @@ public class BitcoinNetworkService {
         log.info("Bitcoin network service stopped.");
     }
 
+    /**
+     * Saves a downloaded Bitcoin block to the database.
+     *
+     * @param block the BitcoinJ Block object
+     */
     private void saveBlock(org.bitcoinj.core.Block block) {
         BlockDAO blockDAO = BlockDAO.builder()
                 .hash(block.getHashAsString())
