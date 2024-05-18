@@ -10,6 +10,9 @@ import com.fsdm.bitcoinbj.model.transaction.TransactionDAO;
 import com.fsdm.bitcoinbj.model.transaction.TransactionInput;
 import com.fsdm.bitcoinbj.model.transaction.TransactionOutput;
 import com.fsdm.bitcoinbj.repository.BlockRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.bitcoinj.core.Block;
+import org.bitcoinj.core.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +32,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
  * It also maps database entities to resource representations that can be used in the API responses.
  */
 @Service
+@Slf4j
 public class BlockServiceImpl implements BlockService {
 
     @Autowired
@@ -185,5 +189,80 @@ public class BlockServiceImpl implements BlockService {
                 .reduce((first, second) -> second)
                 .map(BlockDAO::getHash)
                 .orElse(null);
+    }
+
+    @Transactional
+    public void saveBlock(Block block) {
+        if (block == null) {
+            log.error("Cannot save null block.");
+            return;
+        }
+
+        if (blockRepository.existsById(block.getHashAsString())) {
+            log.info("Block already exists: {}", block.getHashAsString());
+            return;
+        }
+        BlockDAO blockDAO = convertToBlockDAO(block);
+        if (verifyBlockData(block, blockDAO)) {
+            blockRepository.save(blockDAO);
+            log.info("Block saved successfully: {}", block.getHashAsString());
+        } else {
+            log.error("Block data verification failed for block: {}", block.getHashAsString());
+        }
+    }
+
+    private BlockDAO convertToBlockDAO(Block block) {
+        BlockDAO blockDAO = BlockDAO.builder()
+                .hash(block.getHashAsString())
+                .previousHash(block.getPrevBlockHash().toString())
+                .nonce(block.getNonce())
+                .difficulty(block.getDifficultyTarget())
+                .timestamp(block.getTime().toInstant())
+                .build();
+
+        List<TransactionDAO> transactionDAOs = block.getTransactions().stream()
+                .map(tx -> convertToTransactionDAO(tx, blockDAO))
+                .collect(Collectors.toList());
+
+        blockDAO.setTransactions(transactionDAOs);
+        return blockDAO;
+    }
+
+    private TransactionDAO convertToTransactionDAO(Transaction transaction, BlockDAO blockDAO) {
+        TransactionDAO transactionDAO = TransactionDAO.builder()
+                .transactionId(transaction.getTxId().toString())
+                .blockDAO(blockDAO)
+                .build();
+
+        List<TransactionInput> inputs = convertToTransactionInputs(transaction.getInputs(), transactionDAO);
+        List<TransactionOutput> outputs = convertToTransactionOutputs(transaction.getOutputs(), transactionDAO);
+
+        transactionDAO.setInputs(inputs);
+        transactionDAO.setOutputs(outputs);
+
+        return transactionDAO;
+    }
+
+    private List<TransactionInput> convertToTransactionInputs(List<org.bitcoinj.core.TransactionInput> inputs, TransactionDAO transactionDAO) {
+        return inputs.stream().map(input -> TransactionInput.builder()
+                .sourceTransactionId(input.getOutpoint().getHash().toString())
+                .outputIndex((int) input.getOutpoint().getIndex())
+                .scriptSig(input.getScriptSig().toString())
+                .transactionDAO(transactionDAO)
+                .build()).collect(Collectors.toList());
+    }
+
+    private List<TransactionOutput> convertToTransactionOutputs(List<org.bitcoinj.core.TransactionOutput> outputs, TransactionDAO transactionDAO) {
+        return outputs.stream().map(output -> TransactionOutput.builder()
+                .value(output.getValue().toBtc())
+                .scriptPubKey(output.getScriptPubKey().toString())
+                .transactionDAO(transactionDAO)
+                .build()).collect(Collectors.toList());
+    }
+
+    private boolean verifyBlockData(Block block, BlockDAO blockDAO) {
+        boolean isValid = block.getHashAsString().equals(blockDAO.getHash());
+        log.info("Block data verification for block {}: {}", block.getHashAsString(), isValid);
+        return isValid;
     }
 }

@@ -4,7 +4,7 @@ import com.fsdm.bitcoinbj.model.transaction.BlockDAO;
 import com.fsdm.bitcoinbj.model.transaction.TransactionDAO;
 import com.fsdm.bitcoinbj.model.transaction.TransactionInput;
 import com.fsdm.bitcoinbj.model.transaction.TransactionOutput;
-import com.fsdm.bitcoinbj.repository.BlockRepository;
+import com.fsdm.bitcoinbj.service.BlockService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bitcoinj.core.Block;
@@ -25,14 +25,13 @@ import java.util.List;
  * It processes the downloaded blocks and transactions, and saves them to a PostgreSQL database.
  * implements PeerConnectedEventListener, PeerDisconnectedEventListener, and BlocksDownloadedEventListener
  * to respond to Bitcoin network events.
- *
  */
 @Component
 @Slf4j
 @AllArgsConstructor
 public class BitcoinPeerEventListener implements PeerConnectedEventListener, PeerDisconnectedEventListener, BlocksDownloadedEventListener {
 
-    private BlockRepository blockRepository;
+    private final BlockService blockService;
 
     /**
      * Handles the event when a peer is connected.
@@ -58,7 +57,8 @@ public class BitcoinPeerEventListener implements PeerConnectedEventListener, Pee
 
 
     /**
-     * Handles the event when blocks are downloaded from a peer. This method is annotated with @Transactional to ensure
+     * Handles the event when blocks are downloaded from a peer.
+     * This method is annotated with @Transactional to ensure
      * that the database operations are performed within a transaction context.
      *
      * @param peer          the peer from which the block was downloaded
@@ -72,17 +72,8 @@ public class BitcoinPeerEventListener implements PeerConnectedEventListener, Pee
         log.info("Block downloaded: {} from peer: {}", block.getHashAsString(), peer);
         log.info("Block details: Nonce: {}, Difficulty: {}, Transactions: {}", block.getNonce(), block.getDifficultyTarget(), block.getTransactions().size());
 
-        BlockDAO blockDAO = getBlockDAO(block);
-        if (verifyBlockHash(block, blockDAO)) {
-            try {
-                blockRepository.save(blockDAO);
-                log.info("Block saved: {}", block.getHashAsString());
-            } catch (Exception e) {
-                log.error("Error saving block: {}", e.getMessage(), e);
-            }
-        } else {
-            log.error("Block hash verification failed for block: {}", block.getHashAsString());
-        }
+        blockService.saveBlock(block);
+
     }
 
     /**

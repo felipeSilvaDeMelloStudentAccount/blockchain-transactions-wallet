@@ -10,7 +10,9 @@
 
 ## Overview
 
-This application is a simplified Bitcoin blockchain viewer that displays blocks as they are mined. It shows the date and time a block was added to the blockchain, the transactions in the block, the nonce, and the difficulty level. The application connects to the Bitcoin network, receives broadcasts of new blocks, and verifies the integrity of each block.
+This API is a tool for viewing the Bitcoin blockchain allowing users to see newly mined blocks.
+It presents information such, as the timestamp of block addition contained transactions, nonce value and difficulty level. 
+By connecting to the Bitcoin network it receives updates on blocks and checks the authenticity of each one.
 
 ## Features
 
@@ -23,15 +25,15 @@ This application is a simplified Bitcoin blockchain viewer that displays blocks 
 
 ## Technologies Used
 
-- **Java 21**: The main programming language used for the application.
-- **Spring Boot**: Framework for building the REST API and managing the application lifecycle.
-- **PostgreSQL**: Database for storing blockchain data.
-- **Hibernate**: ORM tool for database interactions.
-- **Flyway**: Database migration tool.
-- **Docker**: Containerization tool for packaging the application.
-- **Maven**: Build automation tool for managing dependencies and building the project.
-- **Swagger**: API documentation and testing tool.
-- **Spring Boot Actuator**: For monitoring and managing the application.
+- **Java 21**: The primary programming language utilized for the application is Java 21.
+- **Spring Boot**:  is employed as a framework to construct the REST API and oversee the application lifecycle.
+- **PostgreSQL**: serves as the database for storing data.
+- **Hibernate**: functions as an ORM tool for interacting with the database.
+- **Flyway**: is utilized as a database migration tool.
+- **Docker**: is used as a containerization tool for packaging the application.
+- **Maven**: serves as a build automation tool to manage dependencies and project building.
+- **Swagger**: is employed as an API documentation and testing tool.
+- **Spring Boot Actuator**:  aids, in monitoring and managing the application.
 
 ## Setup
 
