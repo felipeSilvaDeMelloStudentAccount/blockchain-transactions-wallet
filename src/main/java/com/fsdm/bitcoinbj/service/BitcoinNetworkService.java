@@ -43,7 +43,6 @@ public class BitcoinNetworkService {
 
     private BitcoinPeerEventListener bitcoinPeerEventListener;
 
-
     private BlockService blockService;
 
     public BitcoinNetworkService(@Value("${bitcoin.targetNode}") String targetNode, @Value("${bitcoin.port}") int port, BlockService blockService, BitcoinPeerEventListener bitcoinPeerEventListener) {
