@@ -231,7 +231,6 @@ public class BlockServiceImpl implements BlockService {
     List<TransactionDAO> transactionDAOs = block.getTransactions().stream()
         .map(tx -> convertToTransactionDAO(tx, blockDAO))
         .toList();
-
     blockDAO.setTransactions(transactionDAOs);
     return blockDAO;
   }
