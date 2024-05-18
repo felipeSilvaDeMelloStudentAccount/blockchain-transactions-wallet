@@ -55,9 +55,8 @@ public class BitcoinNetworkService {
     @Autowired
     private BitcoinPeerEventListener bitcoinPeerEventListener;
 
-    //A Spring Data JPA repository for performing CRUD operations on BlockDAO objects.
     @Autowired
-    private BlockRepository blockRepository;
+    private BlockService blockService;
 
     /**
      * Initializes the service by connecting to the Bitcoin network.
@@ -91,7 +90,7 @@ public class BitcoinNetworkService {
 
                 this.peerGroup.addConnectedEventListener(bitcoinPeerEventListener);
                 this.peerGroup.addDisconnectedEventListener(bitcoinPeerEventListener);
-                this.peerGroup.addBlocksDownloadedEventListener((peer, block, filteredBlock, blocksLeft) -> saveBlock(block));
+                this.peerGroup.addBlocksDownloadedEventListener((peer, block, filteredBlock, blocksLeft) -> blockService.saveBlock(block));
 
                 this.peerGroup.start();
                 CompletableFuture.runAsync(() -> {
@@ -131,50 +130,5 @@ public class BitcoinNetworkService {
         clientManager.stopAsync();
         clientManager.awaitTerminated();
         log.info("Bitcoin network service stopped.");
-    }
-
-    /**
-     * Saves a downloaded Bitcoin block to the database.
-     *
-     * @param block the BitcoinJ Block object
-     */
-    private void saveBlock(org.bitcoinj.core.Block block) {
-        BlockDAO blockDAO = BlockDAO.builder()
-                .hash(block.getHashAsString())
-                .previousHash(block.getPrevBlockHash().toString())
-                .nonce(block.getNonce())
-                .difficulty(block.getDifficultyTarget())
-                .timestamp(block.getTime().toInstant())
-                .build();
-
-        List<TransactionDAO> transactionDAOs = new ArrayList<>();
-        for (Transaction transaction : block.getTransactions()) {
-            TransactionDAO transactionDAO = TransactionDAO.builder()
-                    .transactionId(transaction.getTxId().toString())
-                    .blockDAO(blockDAO)
-                    .build();
-
-            List<TransactionInput> inputs = transaction.getInputs().stream().map(input -> TransactionInput.builder()
-                    .sourceTransactionId(input.getOutpoint().getHash().toString())
-                    .outputIndex((int) input.getOutpoint().getIndex())
-                    .scriptSig(input.getScriptSig().toString())
-                    .transactionDAO(transactionDAO)
-                    .build()).collect(Collectors.toList());
-
-            List<TransactionOutput> outputs = transaction.getOutputs().stream().map(output -> TransactionOutput.builder()
-                    .value(output.getValue().toBtc())
-                    .scriptPubKey(output.getScriptPubKey().toString())
-                    .transactionDAO(transactionDAO)
-                    .build()).collect(Collectors.toList());
-
-            transactionDAO.setInputs(inputs);
-            transactionDAO.setOutputs(outputs);
-
-            TransactionDAO apply = transactionDAO;
-            transactionDAOs.add(apply);
-        }
-
-        blockDAO.setTransactions(transactionDAOs);
-        blockRepository.save(blockDAO);
     }
 }
