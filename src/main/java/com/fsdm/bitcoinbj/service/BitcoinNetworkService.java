@@ -1,11 +1,6 @@
 package com.fsdm.bitcoinbj.service;
 
 import com.fsdm.bitcoinbj.listener.BitcoinPeerEventListener;
-import com.fsdm.bitcoinbj.model.transaction.BlockDAO;
-import com.fsdm.bitcoinbj.model.transaction.TransactionDAO;
-import com.fsdm.bitcoinbj.model.transaction.TransactionInput;
-import com.fsdm.bitcoinbj.model.transaction.TransactionOutput;
-import com.fsdm.bitcoinbj.repository.BlockRepository;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
@@ -13,21 +8,16 @@ import org.bitcoinj.core.BlockChain;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.core.PeerAddress;
 import org.bitcoinj.core.PeerGroup;
-import org.bitcoinj.core.Transaction;
 import org.bitcoinj.net.NioClientManager;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.store.BlockStore;
 import org.bitcoinj.store.MemoryBlockStore;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.net.InetAddress;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 /**
  * This class manages the connection to the Bitcoin network.
@@ -38,11 +28,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class BitcoinNetworkService {
     // The target node address for the Bitcoin network.
-    @Value("${bitcoin.targetNode}")
     private String targetNode;
 
     //The port number for the Bitcoin network.
-    @Value("${bitcoin.port}")
     private int port;
 
     //The peer group for managing connections to Bitcoin peers.
@@ -52,11 +40,18 @@ public class BitcoinNetworkService {
     private final NioClientManager clientManager = new NioClientManager();
 
     //Event listener for peer-related events.
-    @Autowired
+
     private BitcoinPeerEventListener bitcoinPeerEventListener;
 
-    @Autowired
+
     private BlockService blockService;
+
+    public BitcoinNetworkService(@Value("${bitcoin.targetNode}") String targetNode, @Value("${bitcoin.port}") int port, BlockService blockService, BitcoinPeerEventListener bitcoinPeerEventListener) {
+        this.targetNode = targetNode;
+        this.port = port;
+        this.blockService = blockService;
+        this.bitcoinPeerEventListener = bitcoinPeerEventListener;
+    }
 
     /**
      * Initializes the service by connecting to the Bitcoin network.

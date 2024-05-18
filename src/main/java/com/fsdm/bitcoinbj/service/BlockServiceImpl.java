@@ -13,7 +13,6 @@ import com.fsdm.bitcoinbj.repository.BlockRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.bitcoinj.core.Block;
 import org.bitcoinj.core.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.EntityModel;
@@ -23,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
@@ -35,8 +33,12 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 @Slf4j
 public class BlockServiceImpl implements BlockService {
 
-    @Autowired
+
     private BlockRepository blockRepository;
+
+    public BlockServiceImpl(BlockRepository blockRepository) {
+        this.blockRepository = blockRepository;
+    }
 
     /**
      * Retrieves a paginated list of all blocks.
@@ -68,7 +70,7 @@ public class BlockServiceImpl implements BlockService {
         String nextHash = getNextHash(block);
         String lastHash = getLastHash();
 
-        List<TransactionResource> transactionResources = block.getTransactions().stream().map(this::mapToTransactionResource).collect(Collectors.toList());
+        List<TransactionResource> transactionResources = block.getTransactions().stream().map(this::mapToTransactionResource).toList();
 
         BlockResource blockResource = new BlockResource(
                 block.getHash(),
@@ -111,11 +113,10 @@ public class BlockServiceImpl implements BlockService {
         }
 
         BlockDAO block = blockOptional.get();
-        block.getTransactions().size(); // Ensure transactions are loaded
 
         return block.getTransactions().stream()
                 .map(this::mapToTransactionResource)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -127,11 +128,11 @@ public class BlockServiceImpl implements BlockService {
     private TransactionResource mapToTransactionResource(TransactionDAO tx) {
         List<TransactionInputResource> inputResources = tx.getInputs().stream()
                 .map(this::mapToInputResource)
-                .collect(Collectors.toList());
+                .toList();
 
         List<TransactionOutputResource> outputResources = tx.getOutputs().stream()
                 .map(this::mapToOutputResource)
-                .collect(Collectors.toList());
+                .toList();
 
         return new TransactionResource(tx.getTransactionId(), inputResources, outputResources);
     }
@@ -222,7 +223,7 @@ public class BlockServiceImpl implements BlockService {
 
         List<TransactionDAO> transactionDAOs = block.getTransactions().stream()
                 .map(tx -> convertToTransactionDAO(tx, blockDAO))
-                .collect(Collectors.toList());
+                .toList();
 
         blockDAO.setTransactions(transactionDAOs);
         return blockDAO;
@@ -249,7 +250,7 @@ public class BlockServiceImpl implements BlockService {
                 .outputIndex((int) input.getOutpoint().getIndex())
                 .scriptSig(input.getScriptSig().toString())
                 .transactionDAO(transactionDAO)
-                .build()).collect(Collectors.toList());
+                .build()).toList();
     }
 
     private List<TransactionOutput> convertToTransactionOutputs(List<org.bitcoinj.core.TransactionOutput> outputs, TransactionDAO transactionDAO) {
@@ -257,7 +258,7 @@ public class BlockServiceImpl implements BlockService {
                 .value(output.getValue().toBtc())
                 .scriptPubKey(output.getScriptPubKey().toString())
                 .transactionDAO(transactionDAO)
-                .build()).collect(Collectors.toList());
+                .build()).toList();
     }
 
     private boolean verifyBlockData(Block block, BlockDAO blockDAO) {
