@@ -42,13 +42,18 @@ each one.
 - **Spring Boot Actuator**:  aids, in monitoring and managing the application.
 
 ## Setup
+### Clone the Repository
 
+```bash
+git clone https://github.com/felipeSilvaDeMelloStudentAccount/blockchain-transactions-wallet 
+ cd blockchain-transactions-wallet
+```
 ### Prerequisites
-
 - Java 21 or higher
 - Maven
-- PostgreSQL
-- Docker (optional, for containerized deployment)
+- Docker
+- PostgreSQL (Optinal) only required if running it manually
+
 
 ### Clone the Repository
 
@@ -67,18 +72,50 @@ mvn clean install
 
 Docker simplifies the setup by handling the database configuration and dependencies.
 
-### Build the Docker Image:
+### Build and run the Docker Image:
 
 ```bash 
 docker-compose up --build
 ```
+
+## Bringing the UI up
+- Let the backend running on port 8080
+- then open a new terminal and run the following commands
+### Clone the Repository blockchain-transactions-ui
+```bash
+  git clone https://github.com/felipeSilvaDeMelloStudentAccount/blockchain-transactions-ui 
+  cd blockchain-transactions-ui
+```
+
+### Build the docker image:
+```bash
+  docker build -t blockchain-viewer-web .
+```
+### Run the docker image:
+```bash
+  docker run -p 3000:80 blockchain-viewer-web
+```
+# Finally After everything is up and running
+## UI Running 
+- **React App**: http://localhost:3000
+
+## Backend Running 
+### Accessing Swagger UI
+Once the application is running, you can access the Swagger UI at:
+- **Swagger UI**: http://localhost:8080/api/bitcoin/swagger-ui/index.html
+- **API Docs**: http://localhost:8080/api/bitcoin/v3/api-docs
+
+### Actuator Endpoints
+Spring Boot Actuator endpoints can be accessed for application monitoring:
+**Actuator**: http://localhost:8080/actuator
+
 
 #### Note
 
 - Docker will handle the PostgreSQL setup and configuration.
 - The application will be available on port 8080.
 - **GET http://localhost:8080/api/bitcoin/blocks**: List all blocks.
-
+- 
 ## Running with Maven and PostgreSQL
 
 ### PostgreSQL Configuration
@@ -103,20 +140,7 @@ mvn spring-boot:run
 - The application will be available on port 9001.
   -- **GET http://localhost:9001/api/bitcoin/blocks**: List all blocks.
 
-## Accessing Swagger UI
-
-Once the application is running, you can access the Swagger UI at:
-
-- **Swagger UI**: http://localhost:9001/api/bitcoin/swagger-ui/index.html
-- **API Docs**: http://localhost:9001/api/bitcoin/v3/api-docs
-
-## Actuator Endpoints
-
-Spring Boot Actuator endpoints can be accessed for application monitoring:
-
-**Actuator**: http://localhost:9001/actuator
-
-# API Endpoints
+#### API Endpoints
 
 - **GET /api/bitcoin/blocks**: List all blocks.
 - **GET /api/bitcoin/blocks/{hash}**: Get details of a specific block by hash.

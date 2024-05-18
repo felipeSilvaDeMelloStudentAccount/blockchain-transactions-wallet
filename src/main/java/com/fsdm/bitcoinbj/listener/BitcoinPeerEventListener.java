@@ -35,7 +35,7 @@ public class BitcoinPeerEventListener implements PeerConnectedEventListener,
    */
   @Override
   public void onPeerConnected(Peer peer, int peerCount) {
-    log.info("Connected to peer: {}", peer);
+    log.info("Connected to peer: {}", peer != null ? peer.toString() : "null peer");
   }
 
   /**
@@ -46,7 +46,7 @@ public class BitcoinPeerEventListener implements PeerConnectedEventListener,
    */
   @Override
   public void onPeerDisconnected(Peer peer, int peerCount) {
-    log.info("Disconnected from peer: {}", peer);
+    log.info("Disconnected from peer: {}", peer != null ? peer.toString() : "null peer");
   }
 
 
@@ -64,7 +64,8 @@ public class BitcoinPeerEventListener implements PeerConnectedEventListener,
   @Transactional
   public void onBlocksDownloaded(Peer peer, Block block, FilteredBlock filteredBlock,
       int blocksLeft) {
-    log.info("Block downloaded: {} from peer: {}", block.getHashAsString(), peer);
+    log.info("Block downloaded: {} from peer: {}", block.getHashAsString(),
+        peer != null ? peer.toString() : "null peer");
     log.info("Block details: Nonce: {}, Difficulty: {}, Transactions: {}", block.getNonce(),
         block.getDifficultyTarget(), block.getTransactions().size());
     blockService.saveBlock(block);

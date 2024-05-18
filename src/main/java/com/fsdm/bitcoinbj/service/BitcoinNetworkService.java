@@ -36,9 +36,9 @@ public class BitcoinNetworkService {
   private PeerGroup peerGroup;
 
   //Event listener for peer-related events.
-  private BitcoinPeerEventListener bitcoinPeerEventListener;
+  private final BitcoinPeerEventListener bitcoinPeerEventListener;
 
-  private BlockService blockService;
+  private final BlockService blockService;
 
   public BitcoinNetworkService(@Value("${bitcoin.targetNode}") String targetNode,
       @Value("${bitcoin.port}") int port, BlockService blockService,
