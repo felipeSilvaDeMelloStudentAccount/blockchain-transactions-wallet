@@ -30,5 +30,5 @@ bitcoin:
 logging:
   level:
     springframework: WARN
-    org.hibernate.sql: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: DEBUG
+    org.hibernate.sql: WARN
+    org.hibernate.type.descriptor.sql.BasicBinder: WARN

@@ -8,8 +8,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TransactionInputResource {
-    private Long id;
-    private String sourceTransactionId;
-    private int outputIndex;
-    private String scriptSig;
+
+  private Long id;
+  private String sourceTransactionId;
+  private int outputIndex;
+  private String scriptSig;
 }

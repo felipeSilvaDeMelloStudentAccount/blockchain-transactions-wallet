@@ -24,26 +24,30 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 @Tag(name = "Wallets", description = "Bitcoin wallet management APIs")
 public class BitcoinWalletController {
-    private final BitcoinWalletService bitcoinWalletService;
 
-    /**
-     * Endpoint for creating a new Bitcoin wallet.
-     * <p>
-     * This method calls the {@link BitcoinWalletService#createWallet()} method to create a new wallet.
-     * </p>
-     *
-     * @return a {@link ResponseEntity} containing the created {@link BitcoinWallet} or an error message
-     */
-    @PostMapping
-    @Operation(summary = "Create wallet", description = "Create a new Bitcoin wallet")
-    public ResponseEntity<?> createWallet() {
-        try {
-            BitcoinWallet bitcoinWallet = bitcoinWalletService.createWallet();
-            return ResponseEntity.ok(bitcoinWallet);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create wallet: " + e.getMessage());
-        }
+  private final BitcoinWalletService bitcoinWalletService;
+
+  /**
+   * Endpoint for creating a new Bitcoin wallet.
+   * <p>
+   * This method calls the {@link BitcoinWalletService#createWallet()} method to create a new
+   * wallet.
+   * </p>
+   *
+   * @return a {@link ResponseEntity} containing the created {@link BitcoinWallet} or an error
+   * message
+   */
+  @PostMapping
+  @Operation(summary = "Create wallet", description = "Create a new Bitcoin wallet")
+  public ResponseEntity<?> createWallet() {
+    try {
+      BitcoinWallet bitcoinWallet = bitcoinWalletService.createWallet();
+      return ResponseEntity.ok(bitcoinWallet);
+    } catch (RuntimeException e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body("Failed to create wallet: " + e.getMessage());
     }
+  }
 }
 
 

@@ -8,8 +8,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BlockDTO {
-    private String hash;
-    private String previousHash;
-    private String nextHash;
-    private String lastHash;
+
+  private String hash;
+  private String previousHash;
+  private String nextHash;
+  private String lastHash;
 }
